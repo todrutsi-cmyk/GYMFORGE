@@ -239,6 +239,13 @@ input[type=date]{cursor:pointer;}
   </nav>
 </header>
 
+<!-- 업데이트 공지 -->
+<div id="update-notice" style="display:none;background:var(--s2);border-bottom:1px solid var(--aborder);padding:12px 18px;position:relative;">
+  <div style="font-size:11px;color:var(--accent);font-weight:700;letter-spacing:1px;margin-bottom:4px;" id="notice-version"></div>
+  <div style="font-size:13px;color:var(--text);line-height:1.7;" id="notice-content"></div>
+  <button onclick="closeNotice()" style="position:absolute;top:10px;right:14px;background:none;border:none;color:var(--muted2);cursor:pointer;font-size:16px;padding:4px;">x</button>
+</div>
+
 <main>
 
 <!-- 홈 -->
@@ -592,6 +599,37 @@ input[type=date]{cursor:pointer;}
 <div id="toast"></div>
 
 <script>
+// ─── 업데이트 공지 ──────────────────────────
+const NOTICE = {
+  version: 'v1.1',
+  date: '2025-01-01', // 업데이트 날짜 (이 날짜 기준 24시간 후 자동 숨김)
+  content: [
+    '식품 DB 200개로 확장 — 한식, 중일식, 외식, 음료 추가',
+    '식단 카테고리 필터 추가',
+    '음식 선택 시 탄단지 자동 계산',
+  ]
+};
+
+function initNotice(){
+  const key = 'gf_notice_' + NOTICE.version;
+  const closed = localStorage.getItem(key);
+  if(closed) return; // 이미 닫은 적 있으면 안 띄움
+
+  const updateDate = new Date(NOTICE.date);
+  const now = new Date();
+  const diff = (now - updateDate) / (1000 * 60 * 60); // 시간 차이
+  if(diff > 24) return; // 24시간 지났으면 안 띄움
+
+  document.getElementById('notice-version').textContent = 'UPDATE ' + NOTICE.version + ' — ' + NOTICE.date;
+  document.getElementById('notice-content').innerHTML = NOTICE.content.map(c=>`· ${c}`).join('<br>');
+  document.getElementById('update-notice').style.display = 'block';
+}
+
+function closeNotice(){
+  document.getElementById('update-notice').style.display = 'none';
+  localStorage.setItem('gf_notice_' + NOTICE.version, '1');
+}
+
 // ─── DB ──────────────────────────────────────
 const K={wo:'ar_wo',food:'ar_food',body:'ar_body',rtn:'ar_rtn'};
 let db={
@@ -1787,6 +1825,7 @@ document.getElementById('food-date').value=today();
 document.getElementById('body-date').value=today();
 initRecChips();
 initFoodCats();
+initNotice();
 addSet();addSet();addSet();
 renderHome();
 drawKcalRing(0,2500);
