@@ -336,6 +336,8 @@ input[type=date]{cursor:pointer;}
     </div>
     <!-- 음식 검색 -->
     <div class="field">
+      <label>카테고리</label>
+      <div id="food-cat-wrap" style="display:flex;flex-wrap:wrap;gap:5px;margin-top:4px;margin-bottom:8px;"></div>
       <label>음식 검색</label>
       <input type="text" id="food-search" placeholder="닭가슴살, 오트밀, 연어..." oninput="searchFood(this.value)" autocomplete="off">
       <div id="food-search-result" style="display:none;background:var(--s2);border:1px solid var(--border);border-radius:8px;margin-top:4px;max-height:200px;overflow-y:auto;"></div>
@@ -1180,22 +1182,134 @@ const FOOD_DB=[
   {name:'파인애플',cat:'탄수화물',kcal:50,carb:13,prot:0.5,fat:0.1},
   {name:'올리브 (블랙)',cat:'지방',kcal:115,carb:6.3,prot:0.8,fat:10.7},
   {name:'참깨',cat:'지방',kcal:573,carb:23,prot:18,fat:50},
-  {name:'아몬드밀크 (무가당)',cat:'유제품',kcal:17,carb:0.6,prot:0.6,fat:1.4},
-  {name:'귀리우유',cat:'유제품',kcal:48,carb:9.1,prot:1,fat:1},
+  // 한식
+  {name:'흰쌀밥 (공기)',cat:'한식',kcal:130,carb:28,prot:2.7,fat:0.3},
+  {name:'김치',cat:'한식',kcal:15,carb:2.4,prot:1.1,fat:0.5},
+  {name:'된장찌개',cat:'한식',kcal:42,carb:3.2,prot:3.8,fat:1.5},
+  {name:'김치찌개',cat:'한식',kcal:55,carb:3.8,prot:4.2,fat:2.1},
+  {name:'순두부찌개',cat:'한식',kcal:48,carb:2.9,prot:4.5,fat:1.8},
+  {name:'비빔밥',cat:'한식',kcal:128,carb:22,prot:5.2,fat:2.8},
+  {name:'불고기',cat:'한식',kcal:190,carb:8,prot:18,fat:9},
+  {name:'제육볶음',cat:'한식',kcal:210,carb:6,prot:17,fat:13},
+  {name:'삼겹살 (구운)',cat:'한식',kcal:331,carb:0,prot:18,fat:28},
+  {name:'갈비찜',cat:'한식',kcal:215,carb:8,prot:20,fat:12},
+  {name:'닭갈비',cat:'한식',kcal:148,carb:8,prot:18,fat:5},
+  {name:'순살치킨',cat:'한식',kcal:239,carb:10,prot:22,fat:13},
+  {name:'양념치킨',cat:'한식',kcal:265,carb:18,prot:20,fat:13},
+  {name:'떡볶이',cat:'한식',kcal:140,carb:28,prot:3.2,fat:1.8},
+  {name:'라면 (신라면)',cat:'한식',kcal:500,carb:79,prot:10,fat:16},
+  {name:'계란찜',cat:'한식',kcal:75,carb:1.2,prot:8.5,fat:4},
+  {name:'미역국',cat:'한식',kcal:25,carb:2.1,prot:2.8,fat:0.8},
+  {name:'콩나물국',cat:'한식',kcal:20,carb:2.4,prot:2.1,fat:0.4},
+  {name:'잡채',cat:'한식',kcal:135,carb:22,prot:4.2,fat:3.5},
+  {name:'해물파전',cat:'한식',kcal:185,carb:22,prot:8,fat:7},
+  {name:'보쌈',cat:'한식',kcal:195,carb:0,prot:22,fat:11},
+  {name:'수육',cat:'한식',kcal:180,carb:0,prot:21,fat:10},
+  {name:'청국장',cat:'한식',kcal:52,carb:3.8,prot:5.2,fat:2.1},
+  {name:'굴국밥',cat:'한식',kcal:110,carb:18,prot:7.2,fat:1.5},
+  {name:'황태해장국',cat:'한식',kcal:65,carb:3.2,prot:9.8,fat:1.2},
+  {name:'삼계탕',cat:'한식',kcal:148,carb:8,prot:18,fat:5.5},
+  {name:'갈비탕',cat:'한식',kcal:142,carb:2.1,prot:18,fat:7},
+  {name:'설렁탕',cat:'한식',kcal:98,carb:1.8,prot:14,fat:4.2},
+  {name:'곱창볶음',cat:'한식',kcal:245,carb:8,prot:19,fat:16},
+  {name:'부대찌개',cat:'한식',kcal:145,carb:12,prot:10,fat:6},
+  // 중식 / 일식
+  {name:'초밥 (1개)',cat:'중일식',kcal:48,carb:8.5,prot:2.8,fat:0.5},
+  {name:'연어 초밥',cat:'중일식',kcal:58,carb:8,prot:4,fat:1.2},
+  {name:'참치 초밥',cat:'중일식',kcal:52,carb:8.2,prot:3.8,fat:0.6},
+  {name:'라멘 (쇼유)',cat:'중일식',kcal:155,carb:22,prot:9,fat:4},
+  {name:'라멘 (돈코츠)',cat:'중일식',kcal:185,carb:20,prot:10,fat:7},
+  {name:'규동 (소고기덮밥)',cat:'중일식',kcal:148,carb:20,prot:9,fat:4.2},
+  {name:'카레라이스',cat:'중일식',kcal:158,carb:28,prot:5.5,fat:3.2},
+  {name:'짜장면',cat:'중일식',kcal:185,carb:32,prot:7,fat:3.8},
+  {name:'짬뽕',cat:'중일식',kcal:142,carb:22,prot:9,fat:3.2},
+  {name:'볶음밥',cat:'중일식',kcal:195,carb:32,prot:6,fat:5.5},
+  {name:'탕수육',cat:'중일식',kcal:265,carb:28,prot:12,fat:12},
+  {name:'마파두부',cat:'중일식',kcal:115,carb:6,prot:8,fat:6.5},
+  {name:'팟타이',cat:'중일식',kcal:165,carb:25,prot:8,fat:4.5},
+  {name:'스시롤 (캘리포니아)',cat:'중일식',kcal:93,carb:15,prot:3.8,fat:2.1},
+  {name:'미소국',cat:'중일식',kcal:40,carb:4.2,prot:3.5,fat:1.2},
+  // 외식 / 패스트푸드
+  {name:'빅맥',cat:'외식',kcal:550,carb:45,prot:25,fat:30},
+  {name:'맥너겟 (6조각)',cat:'외식',kcal:280,carb:17,prot:18,fat:16},
+  {name:'감자튀김 (중)',cat:'외식',kcal:320,carb:43,prot:4,fat:15},
+  {name:'버거킹 와퍼',cat:'외식',kcal:670,carb:51,prot:28,fat:40},
+  {name:'서브웨이 이탈리안 (15cm)',cat:'외식',kcal:410,carb:47,prot:21,fat:15},
+  {name:'피자 (치즈, 1조각)',cat:'외식',kcal:272,carb:34,prot:12,fat:10},
+  {name:'KFC 치킨 (1조각)',cat:'외식',kcal:294,carb:10,prot:22,fat:19},
+  {name:'도미노 페퍼로니 (1조각)',cat:'외식',kcal:298,carb:35,prot:13,fat:12},
+  {name:'샌드위치 (햄치즈)',cat:'외식',kcal:290,carb:35,prot:16,fat:9},
+  {name:'타코 (비프)',cat:'외식',kcal:210,carb:19,prot:12,fat:9},
+  {name:'부리토 (치킨)',cat:'외식',kcal:415,carb:50,prot:24,fat:13},
+  {name:'샐러드 (시저)',cat:'외식',kcal:158,carb:8,prot:7,fat:12},
+  {name:'샐러드 (그릭)',cat:'외식',kcal:98,carb:6,prot:3.5,fat:7},
+  {name:'스테이크하우스 립아이',cat:'외식',kcal:320,carb:0,prot:30,fat:22},
+  // 간식
+  {name:'그래놀라바',cat:'간식',kcal:380,carb:60,prot:8,fat:12},
+  {name:'오레오 (1개)',cat:'간식',kcal:53,carb:8,prot:0.6,fat:2.3},
+  {name:'초코바 (스니커즈)',cat:'간식',kcal:488,carb:58,prot:9,fat:24},
+  {name:'감자칩 (원통형)',cat:'간식',kcal:536,carb:55,prot:5,fat:34},
+  {name:'팝콘 (버터)',cat:'간식',kcal:424,carb:50,prot:7,fat:22},
+  {name:'떡 (가래떡)',cat:'간식',kcal:224,carb:51,prot:3.8,fat:0.5},
+  {name:'떡 (인절미)',cat:'간식',kcal:228,carb:48,prot:4.5,fat:1.8},
+  {name:'고구마칩',cat:'간식',kcal:445,carb:62,prot:3.5,fat:21},
+  {name:'견과류 믹스',cat:'간식',kcal:607,carb:21,prot:15,fat:54},
+  {name:'다크초콜릿 (70%)',cat:'간식',kcal:598,carb:46,prot:8,fat:43},
+  {name:'에너지바 (클리프바)',cat:'간식',kcal:250,carb:44,prot:9,fat:5},
+  {name:'라이스케이크 (카라멜)',cat:'간식',kcal:390,carb:82,prot:7,fat:3},
+  {name:'건포도',cat:'간식',kcal:299,carb:79,prot:3.1,fat:0.5},
+  {name:'건크랜베리',cat:'간식',kcal:308,carb:82,prot:0.1,fat:1.1},
+  {name:'곶감',cat:'간식',kcal:274,carb:71,prot:1.8,fat:0.6},
+  // 음료
+  {name:'아메리카노 (블랙)',cat:'음료',kcal:10,carb:1.5,prot:0.3,fat:0.1},
+  {name:'라떼 (우유)',cat:'음료',kcal:120,carb:12,prot:6,fat:5},
+  {name:'오렌지주스',cat:'음료',kcal:45,carb:10,prot:0.7,fat:0.2},
+  {name:'우유 (200ml)',cat:'음료',kcal:122,carb:9.6,prot:6.4,fat:6.6},
+  {name:'프로틴음료 (시판)',cat:'음료',kcal:160,carb:8,prot:25,fat:3},
+  {name:'게토레이',cat:'음료',kcal:26,carb:7,prot:0,fat:0},
+  {name:'코카콜라',cat:'음료',kcal:42,carb:11,prot:0,fat:0},
+  {name:'콜라 제로',cat:'음료',kcal:1,carb:0.1,prot:0,fat:0},
+  {name:'아몬드브리즈 (무가당)',cat:'음료',kcal:17,carb:0.6,prot:0.6,fat:1.4},
+  {name:'두유 (무가당)',cat:'음료',kcal:33,carb:1.8,prot:3.2,fat:1.8},
+  {name:'초코우유',cat:'음료',kcal:72,carb:11,prot:3.2,fat:1.9},
+  {name:'이온음료 (포카리)',cat:'음료',kcal:27,carb:6.7,prot:0,fat:0},
+  {name:'녹차 (무가당)',cat:'음료',kcal:2,carb:0.4,prot:0.2,fat:0},
+  {name:'프로틴쉐이크 (자가제조)',cat:'음료',kcal:200,carb:15,prot:30,fat:3},
 ];
 
 let selectedFoodItem = null;
 
+let foodCatFilter='';
+
+function initFoodCats(){
+  const wrap=document.getElementById('food-cat-wrap');
+  const cats=['전체',...new Set(FOOD_DB.map(f=>f.cat))];
+  cats.forEach(cat=>{
+    const btn=document.createElement('button');
+    btn.className='chip'+(cat==='전체'?' on':'');
+    btn.textContent=cat;
+    btn.onclick=()=>{
+      document.querySelectorAll('#food-cat-wrap .chip').forEach(c=>c.classList.remove('on'));
+      btn.classList.add('on');
+      foodCatFilter=cat==='전체'?'':cat;
+      searchFood(document.getElementById('food-search').value);
+    };
+    wrap.appendChild(btn);
+  });
+}
+
 function searchFood(q){
   const res=document.getElementById('food-search-result');
-  if(!q.trim()){res.style.display='none';return;}
-  const matched=FOOD_DB.filter(f=>f.name.includes(q)||f.cat.includes(q)).slice(0,10);
+  const matched=FOOD_DB.filter(f=>
+    (!foodCatFilter||f.cat===foodCatFilter)&&
+    (!q.trim()||f.name.includes(q)||f.cat.includes(q))
+  ).slice(0,12);
   if(!matched.length){res.style.display='none';return;}
   res.style.display='block';
   res.innerHTML=matched.map(f=>`
-    <div onclick="selectFood(${JSON.stringify(f).replace(/"/g,'&quot;')})" style="padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .1s;" onmouseover="this.style.background='var(--s3)'" onmouseout="this.style.background=''">
-      <div style="font-size:13px;font-weight:500;">${f.name}</div>
-      <div style="font-size:11px;color:var(--muted2);margin-top:2px;">${f.kcal}kcal · 탄 ${f.carb}g · 단 ${f.prot}g · 지 ${f.fat}g <span style="color:var(--muted);margin-left:4px;">(100g)</span></div>
+    <div onclick='selectFood(${JSON.stringify(f).replace(/'/g,"&#39;")})' style="padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .1s;" onmouseover="this.style.background='var(--s3)'" onmouseout="this.style.background=''">
+      <div style="font-size:13px;font-weight:500;">${f.name} <span style="font-size:10px;color:var(--muted);margin-left:4px;">${f.cat}</span></div>
+      <div style="font-size:11px;color:var(--muted2);margin-top:2px;">${f.kcal}kcal · 탄 ${f.carb}g · 단 ${f.prot}g · 지 ${f.fat}g <span style="color:var(--muted);">(100g)</span></div>
     </div>`).join('');
 }
 
@@ -1672,6 +1786,7 @@ document.getElementById('rec-date').value=today();
 document.getElementById('food-date').value=today();
 document.getElementById('body-date').value=today();
 initRecChips();
+initFoodCats();
 addSet();addSet();addSet();
 renderHome();
 drawKcalRing(0,2500);
